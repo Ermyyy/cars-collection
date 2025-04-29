@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        header {
+            background-color: #222;
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        h1 {
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        .car-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .car-card {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .car-card:hover {
+            transform: scale(1.03);
+        }
+
+        .car-card h3 {
+            margin: 0.5rem 0;
+        }
+
+        form, .filter {
+            margin-top: 2rem;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            margin-top: 0.5rem;
+            padding: .5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 0.5rem;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        /*media*/
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Автомобильная Коллекция</h1>
+        <p>Коллекция интересных автомобилей</p>
+      </header>
+    
+      <main class="container">
+        <section>
+          <h2>Фильтрация</h2>
+          <div class="filter">
+            <label>Мин. л.с.:</label>
+            <input type="number" id="minHP" placeholder="например, 300">
+    
+            <label>Год выпуска от:</label>
+            <input type="number" id="minYear" placeholder="например, 2015">
+    
+            <button id="filterBtn">Применить фильтр</button>
+          </div>
+        </section>
+    
+        <section>
+          <h2>Мои автомобили</h2>
+          <div id="carList" class="car-list"></div>
+        </section>
+    
+        <section>
+          <h2>Добавить автомобиль</h2>
+          <form id="carForm">
+            <label>Название автомобиля:</label>
+            <input type="text" id="carName" required>
+    
+            <label>Описание:</label>
+            <textarea id="carDesc" required></textarea>
+    
+            <label>Лошадиные силы:</label>
+            <input type="number" id="carHP" required>
+    
+            <label>Год выпуска:</label>
+            <input type="number" id="carYear" required>
+    
+            <button type="submit" onclick="clickBtn()">Добавить</button>
+          </form>
+        </section>
+      </main>
+    <script>
+        //переменные:
+        const carList = document.getElementById('carList');
+
+        const carForm = document.getElementById('carForm');
+
+        const carName = document.getElementById('carName');
+
+        const carDesc = document.getElementById('carDesc');
+
+        const carHP = document.getElementById('carHP');
+
+        const carYear = document.getElementById('carYear');
+
+        const minHP = document.getElementById('minHP');
+
+        const minYear = document.getElementById('minYear');
+
+        const filterBtn = document.getElementById('filterBtn');
+        //слушатели
+        const cars = []
+        function createCars(filteredCars = cars) {
+            carList.innerHTML = ''
+            filteredCars.forEach((car) => {
+                const div = document.createElement('div');
+                div.className = 'car-card';
+                div.innerHTML = `<h3>${car.name}</h3><p>${car.desc}</p><strong>${car.hp} л.с.</strong>, ${car.year} г.</p>`
+                carList.appendChild(div)
+            })
+        }
+        function clickBtn() {
+            const name = carName.value.trim();
+            const desc = carDesc.value.trim();
+            const hp = parseInt(carHP.value);
+            const year = parseInt(carYear.value);
+            if (name && desc && !isNaN(hp) && year) {
+                cars.push({name,desc, hp,year})
+                createCars()
+                carForm.reset();
+            }
+        }
+
+        filterBtn.addEventListener('click', function applyFilter() {
+            const hpValue = parseInt(minHP.value);
+            const yearValue = parseInt(minYear.value);
+            const filtered = cars.filter(car => {
+                return (!isNaN(hpValue) ? car.hp >= hpValue : true) && (!isNaN(yearValue) ? car.year >= yearValue :true)
+
+            })
+            createCars(filtered)
+        })  
+        createCars()
+    </script>
+</body>
+</html>
